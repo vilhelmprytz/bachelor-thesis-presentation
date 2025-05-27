@@ -36,8 +36,8 @@
 
 \begin{itemize}
     \item<1->\textbf{What is DNS?}
-    \item<2->Phonebook of the internet: human names → IP addresses. Can be used to associate various data with a domain name.
-    \item<3->Essential for internet to work. Often ignored in firewalls.
+    \item<2->Phonebook of the internet: DNS translates domain names to IP addresses. It can also associate other types of data with a domain name.
+    \item<3->Essential for internet to work.
 \end{itemize}
 
 \end{frame}
@@ -49,7 +49,7 @@
     \item<1->\textbf{Imagine a computer system that controls a nuclear reactor}
     \item<2->Assume an attacker has access to this system.
     \item<3->They want to exfiltrate a sensitive file but they cannot, because a firewall is limiting outgoing internet access.
-    \item<4->But DNS is not limited! Using a \textbf{DNS covert channel}, they can send the sensitive file over DNS.
+    \item<4->But DNS is left unfiltered! Previous research indicates this is often the case. Using a \textbf{DNS covert channel}, they can send the sensitive file over DNS.
     \item<5->How can we detect this covert channel? \textbf{Intrusion Detection System (IDS)}.
 \end{itemize}
     
@@ -61,7 +61,7 @@
 \frametitle{Research Questions}
 
 \begin{itemize}
-    \item<1-> Can \textit{Snort} detect \textit{Iodine} covert channels?
+    \item<1-> Can \textit{Snort} (the IDS software) detect \textit{Iodine} (the covert channel software) covert channels?
     \item<2-> If so, how can the configuration or source code of \textit{Iodine} be altered to avoid detection by \textit{Snort} using established detection rules?
     \item<3-> What generalized conclusions can be drawn about how IDSs detect covert channels?
 \end{itemize}
@@ -71,13 +71,24 @@
 
 \section{Method}
 
+\begin{frame}
+\frametitle{How are we answering these questions?}
+
+\begin{itemize}
+    \item<1-> Using an experimental setup that runs \textit{Iodine} and \textit{Snort}.
+    \item<2-> Mixing \textit{Iodine} traffic with legitimate traffic to see if \textit{Snort} falsely detects this.
+    \item<3-> Using established detection rules from previous research.
+    \item<4-> Modifying \textit{Iodine} to try to avoid these rules.
+\end{itemize}
+\end{frame}
+
 %---------------------------------------------------------
 
 \begin{frame}
 \frametitle{What are we modifying?}
 
 \begin{itemize}
-    \item<1-> \textbf{Record Type}: Iodine employs the NULL record type by default, which is readily detectable through signature-based methods.
+    \item<1-> \textbf{Record Type}: Iodine employs the NULL record type by default.
     \item<2-> \textbf{EDNS(0) Parameter}: Iodine also makes use of EDNS(0), an extension to DNS.
 \end{itemize}
 \end{frame}
@@ -151,7 +162,7 @@ What does this mean?
 \frametitle{Answering our Research Questions}
   \begin{itemize}
     \item<1-> \textbf{Can \textit{Snort} detect \textit{Iodine} covert channels?}
-    \item<2-> Yes, using well-defined rules.
+    \item<2-> Yes, using well-defined Snort rules.
 
     \item<3-> \textbf{If so, how can the configuration or source code of \textit{Iodine} be altered to avoid detection by \textit{Snort} using established detection rules?}
     \item<4-> By modifying the Record Type parameter and the EDNS(0) parameter.
@@ -164,12 +175,13 @@ What does this mean?
 %---------------------------------------------------------
 
 \begin{frame}
-\frametitle{Limitations and Problems}
+\frametitle{Discussion}
 
 \begin{itemize}
-    \item<1-> Selection of parameters.
-    \item<2-> Which rules we use.
-    \item<3-> Converting Snort2 to Snort3 alerts.
+    \item<1-> \textbf{Selection of parameter values}: Limited scope to include parameter values relevant in typical DNS usage.
+    \item<2-> \textbf{Selection of Snort rules}: Use more than two rules.
+    \item<3-> \textbf{Signature-based}: We only look at signatures, adopt statistical-based.
+    \item<4-> \textbf{Experimental Setup}: Simplified experimental setup that doesn't include a resolver.
 \end{itemize}
 
 \end{frame}
